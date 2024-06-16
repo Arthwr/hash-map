@@ -75,11 +75,41 @@ export default function hashMap() {
     buckets.forEach((bucket) => bucket.clear());
   };
 
+  const keys = () => {
+    let allKeys = [];
+    buckets.forEach((bucket) => {
+      const keys = bucket.getKeys();
+      allKeys = allKeys.concat(keys);
+    });
+    return allKeys;
+  };
+
+  const values = () => {
+    let allValues = [];
+    buckets.forEach((bucket) => {
+      const values = bucket.getValues();
+      allValues = allValues.concat(values);
+    });
+    return allValues;
+  };
+
+  const entries = () => {};
+
   const printBucketData = () => {
     return buckets.map((bucket) => bucket.print());
   };
 
-  return { set, get, has, remove, length, clear, printBucketData };
+  return {
+    set,
+    get,
+    has,
+    remove,
+    length,
+    clear,
+    keys,
+    values,
+    printBucketData,
+  };
 }
 
 const newList = hashMap();
@@ -92,12 +122,12 @@ newList.set("Michael", "Wise");
 newList.set("Elizabeth", "Clever");
 newList.set("Alice", "Kind");
 
-console.log(newList.printBucketData());
-console.log(newList.get("Arthur"));
-console.log(newList.get("Alice"));
-console.log(newList.get("Kek"));
-console.log(newList.has("Arthur"));
-console.log(newList.remove("Arthur"));
-console.log(newList.printBucketData());
-console.log(newList.length());
-console.log(newList.printBucketData());
+// console.log(newList.printBucketData());
+// console.log(newList.get("Arthur"));
+// console.log(newList.get("Alice"));
+// console.log(newList.get("Kek"));
+// console.log(newList.has("Arthur"));
+// console.log(newList.remove("Arthur"));
+// console.log(newList.printBucketData());
+// console.log(newList.length());
+// console.log(newList.printBucketData());

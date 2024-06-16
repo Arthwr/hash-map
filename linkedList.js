@@ -36,6 +36,27 @@ export default function linkedList() {
 
   const getTail = () => tail;
 
+  const getKeys = () => {
+    let keys = [];
+    let currentNode = head;
+    while (currentNode) {
+      keys.push(currentNode.key);
+      currentNode = currentNode.nextNode;
+    }
+    return keys;
+  };
+
+  const getValues = () => {
+    let values = [];
+    let currentNode = head;
+    while (currentNode) {
+      values.push(currentNode.value);
+      currentNode = currentNode.nextNode;
+    }
+
+    return values;
+  };
+
   const atIndex = (index) => {
     if (index < 0) throw new Error("No negative index");
 
@@ -171,6 +192,8 @@ export default function linkedList() {
     getSize,
     getHead,
     getTail,
+    getKeys,
+    getValues,
     atIndex,
     pop,
     containsValue,
