@@ -6,6 +6,11 @@ export default function linkedList() {
   let head = null;
   let tail = null;
 
+  const clear = () => {
+    head = null;
+    tail = null;
+  };
+
   const prepend = (key, value) => {
     head = node(key, value, head);
     if (tail === null) tail = head;
@@ -84,14 +89,27 @@ export default function linkedList() {
     return null;
   };
 
+  const findIndexByKey = (key) => {
+    let index = 0;
+    let currentNode = head;
+
+    while (currentNode) {
+      if (currentNode.key === key) return index;
+      currentNode = currentNode.nextNode;
+      index++;
+    }
+
+    return -1;
+  };
+
   const print = () => {
     let nodes = [];
     let currentNode = head;
     while (currentNode) {
-      nodes.push(`{key : ${currentNode.key}, value: ${currentNode.value}`);
+      nodes.push(`{key : ${currentNode.key}, value: ${currentNode.value}}`);
       currentNode = currentNode.nextNode;
     }
-    return nodes.join(" -> ") + " -> null";
+    return nodes.join(" -> ") + " -> {null}";
   };
 
   const insertAt = (key, value, index) => {
@@ -118,9 +136,13 @@ export default function linkedList() {
   const removeAt = (index) => {
     if (index < 0) throw new Error("Index cannot be negative");
     if (head === null) throw new Error("Cannot remove from an empty list");
+
     if (index === 0) {
       head = head.nextNode;
-      if (head === null) return (tail = null);
+      if (head === null) {
+        tail = null;
+      }
+      return;
     }
 
     let prevNode = null;
@@ -156,5 +178,7 @@ export default function linkedList() {
     print,
     insertAt,
     removeAt,
+    findIndexByKey,
+    clear,
   };
 }
