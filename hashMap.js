@@ -93,7 +93,9 @@ export default function hashMap() {
     return allValues;
   };
 
-  const entries = () => {};
+  const entries = () => {
+    return buckets.reduce((acc, bucket) => acc.concat(bucket.getEntries()), []);
+  };
 
   const printBucketData = () => {
     return buckets.map((bucket) => bucket.print());
@@ -108,6 +110,7 @@ export default function hashMap() {
     clear,
     keys,
     values,
+    entries,
     printBucketData,
   };
 }
@@ -122,12 +125,13 @@ newList.set("Michael", "Wise");
 newList.set("Elizabeth", "Clever");
 newList.set("Alice", "Kind");
 
-// console.log(newList.printBucketData());
-// console.log(newList.get("Arthur"));
-// console.log(newList.get("Alice"));
-// console.log(newList.get("Kek"));
-// console.log(newList.has("Arthur"));
-// console.log(newList.remove("Arthur"));
-// console.log(newList.printBucketData());
-// console.log(newList.length());
-// console.log(newList.printBucketData());
+console.log(newList.printBucketData());
+console.log(newList.get("Arthur"));
+console.log(newList.get("Alice"));
+console.log(newList.get("Kek"));
+console.log(newList.has("Arthur"));
+console.log(newList.remove("Arthur"));
+console.log(newList.printBucketData());
+console.log(newList.length());
+console.log(newList.printBucketData());
+console.log(newList.entries());

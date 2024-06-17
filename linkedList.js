@@ -36,26 +36,11 @@ export default function linkedList() {
 
   const getTail = () => tail;
 
-  const getKeys = () => {
-    let keys = [];
-    let currentNode = head;
-    while (currentNode) {
-      keys.push(currentNode.key);
-      currentNode = currentNode.nextNode;
-    }
-    return keys;
-  };
+  const getKeys = () => traverseList((node) => node.key);
 
-  const getValues = () => {
-    let values = [];
-    let currentNode = head;
-    while (currentNode) {
-      values.push(currentNode.value);
-      currentNode = currentNode.nextNode;
-    }
+  const getValues = () => traverseList((node) => node.value);
 
-    return values;
-  };
+  const getEntries = () => traverseList((node) => [node.key, node.value]);
 
   const atIndex = (index) => {
     if (index < 0) throw new Error("No negative index");
@@ -186,6 +171,18 @@ export default function linkedList() {
     }
   };
 
+  const traverseList = (callback) => {
+    const results = [];
+    for (
+      let currentNode = head;
+      currentNode;
+      currentNode = currentNode.nextNode
+    ) {
+      results.push(callback(currentNode));
+    }
+    return results;
+  };
+
   return {
     prepend,
     append,
@@ -194,6 +191,7 @@ export default function linkedList() {
     getTail,
     getKeys,
     getValues,
+    getEntries,
     atIndex,
     pop,
     containsValue,
