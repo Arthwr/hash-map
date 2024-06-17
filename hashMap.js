@@ -140,6 +140,5 @@ export default function hashMap() {
     ...listProperties,
     ...retrievalMethods,
     ...otherMethods,
-    buckets,
   };
 }
