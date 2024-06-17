@@ -1,9 +1,10 @@
 import linkedList from "./linkedList.js";
 
 export default function hashMap() {
+  let size = 16;
+
   const LOAD_FACTOR = 0.75;
-  const size = 16;
-  const buckets = Array(size)
+  let buckets = Array(size)
     .fill(null)
     .map(() => linkedList());
 
@@ -18,6 +19,22 @@ export default function hashMap() {
     return hashCode;
   };
 
+  const resize = () => {
+    size = size * 2;
+    const newBuckets = Array(size)
+      .fill(null)
+      .map(() => linkedList());
+
+    buckets.forEach((bucket) => {
+      bucket.getEntries().forEach(([key, value]) => {
+        const newIndex = hash(key);
+        newBuckets[newIndex].append(key, value);
+      });
+    });
+
+    buckets = newBuckets;
+  };
+
   const getBucket = (key) => {
     const index = hash(key);
     const bucket = buckets[index];
@@ -29,109 +46,94 @@ export default function hashMap() {
     return { index, bucket };
   };
 
-  const set = (key, value) => {
-    const { bucket } = getBucket(key);
-    const existingNode = bucket.findNode((node) => node.key === key);
-    if (existingNode) {
-      existingNode.value = value;
-    } else {
-      bucket.append(key, value);
-    }
+  const nodeManipulation = {
+    set(key, value) {
+      if (listProperties.length() >= LOAD_FACTOR * size) {
+        resize();
+      }
+      const { bucket } = getBucket(key);
+      const existingNode = bucket.findNode((node) => node.key === key);
+      if (existingNode) {
+        existingNode.value = value;
+      } else {
+        bucket.append(key, value);
+      }
+    },
+
+    get(key) {
+      const { bucket } = getBucket(key);
+      const node = bucket.findNode((node) => node.key === key);
+      return node ? node.value : null;
+    },
+
+    has(key) {
+      const { bucket } = getBucket(key);
+      return bucket
+        ? bucket.findNode((node) => node.key === key) !== null
+        : false;
+    },
+
+    remove(key) {
+      const { bucket } = getBucket(key);
+      const index = bucket.findIndexByKey(key);
+      if (index !== -1) {
+        bucket.removeAt(index);
+        return true;
+      }
+      return false;
+    },
   };
 
-  const get = (key) => {
-    const { bucket } = getBucket(key);
-    const node = bucket.findNode((node) => node.key === key);
-    return node ? node.value : null;
+  const listProperties = {
+    length() {
+      let count = 0;
+      buckets.forEach((item) => {
+        count += item.getSize();
+      });
+      return count;
+    },
+
+    clear() {
+      buckets.forEach((bucket) => bucket.clear());
+    },
   };
 
-  const has = (key) => {
-    const { bucket } = getBucket(key);
-    return bucket
-      ? bucket.findNode((node) => node.key === key) !== null
-      : false;
+  const retrievalMethods = {
+    keys() {
+      let allKeys = [];
+      buckets.forEach((bucket) => {
+        allKeys = allKeys.concat(bucket.getKeys());
+      });
+      return allKeys;
+    },
+
+    values() {
+      let allValues = [];
+      buckets.forEach((bucket) => {
+        allValues = allValues.concat(bucket.getValues());
+      });
+      return allValues;
+    },
+
+    entries() {
+      return buckets.reduce(
+        (acc, bucket) => acc.concat(bucket.getEntries()),
+        []
+      );
+    },
   };
 
-  const remove = (key) => {
-    const { bucket } = getBucket(key);
-    const index = bucket.findIndexByKey(key);
-    if (index !== -1) {
-      bucket.removeAt(index);
-      return true;
-    }
-    return false;
-  };
-
-  const length = () => {
-    let count = 0;
-    buckets.forEach((item) => {
-      const size = item.getSize();
-      count += size;
-    });
-    return count;
-  };
-
-  const clear = () => {
-    buckets.forEach((bucket) => bucket.clear());
-  };
-
-  const keys = () => {
-    let allKeys = [];
-    buckets.forEach((bucket) => {
-      const keys = bucket.getKeys();
-      allKeys = allKeys.concat(keys);
-    });
-    return allKeys;
-  };
-
-  const values = () => {
-    let allValues = [];
-    buckets.forEach((bucket) => {
-      const values = bucket.getValues();
-      allValues = allValues.concat(values);
-    });
-    return allValues;
-  };
-
-  const entries = () => {
-    return buckets.reduce((acc, bucket) => acc.concat(bucket.getEntries()), []);
-  };
-
-  const printBucketData = () => {
-    return buckets.map((bucket) => bucket.print());
+  const otherMethods = {
+    printBucketData() {
+      return buckets.map((bucket) => bucket.print());
+    },
   };
 
   return {
-    set,
-    get,
-    has,
-    remove,
-    length,
-    clear,
-    keys,
-    values,
-    entries,
-    printBucketData,
+    ...nodeManipulation,
+    ...listProperties,
+    ...retrievalMethods,
+    ...otherMethods,
+    buckets,
   };
 }
-
-const newList = hashMap();
-newList.set("Arthur", "Great");
-newList.set("Rutha", "Wise");
-newList.set("George", "Bad");
-newList.set("Phillip", "Smart");
-newList.set("John", "Brave");
-newList.set("Michael", "Wise");
-newList.set("Elizabeth", "Clever");
-newList.set("Alice", "Kind");
-
-console.log(newList.printBucketData());
-console.log(newList.get("Arthur"));
-console.log(newList.get("Alice"));
-console.log(newList.get("Kek"));
-console.log(newList.has("Arthur"));
-console.log(newList.remove("Arthur"));
-console.log(newList.printBucketData());
-console.log(newList.length());
-console.log(newList.printBucketData());
-console.log(newList.entries());
