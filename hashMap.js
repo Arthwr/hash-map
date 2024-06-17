@@ -88,6 +88,10 @@ export default function hashMap() {
       }
       return false;
     },
+
+    clear() {
+      buckets.forEach((bucket) => bucket.clear());
+    },
   };
 
   const listProperties = {
@@ -97,10 +101,6 @@ export default function hashMap() {
         count += item.getSize();
       });
       return count;
-    },
-
-    clear() {
-      buckets.forEach((bucket) => bucket.clear());
     },
   };
 
