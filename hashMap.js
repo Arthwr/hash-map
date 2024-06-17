@@ -91,6 +91,7 @@ export default function hashMap() {
 
     clear() {
       buckets.forEach((bucket) => bucket.clear());
+      size = 16;
     },
   };
 
