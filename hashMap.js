@@ -2,8 +2,9 @@ import linkedList from "./linkedList.js";
 
 export default function hashMap() {
   let size = 16;
-
   const LOAD_FACTOR = 0.75;
+  const MIN_LOAD_FACTOR = 0.25;
+
   let buckets = Array(size)
     .fill(null)
     .map(() => linkedList());
@@ -19,9 +20,10 @@ export default function hashMap() {
     return hashCode;
   };
 
-  const resize = () => {
-    size = size * 2;
-    const newBuckets = Array(size)
+  const resize = (newSize) => {
+    if (newSize < 16) newSize = 16;
+
+    const newBuckets = Array(newSize)
       .fill(null)
       .map(() => linkedList());
 
@@ -32,6 +34,7 @@ export default function hashMap() {
       });
     });
 
+    size = newSize;
     buckets = newBuckets;
   };
 
@@ -49,7 +52,7 @@ export default function hashMap() {
   const nodeManipulation = {
     set(key, value) {
       if (listProperties.length() >= LOAD_FACTOR * size) {
-        resize();
+        resize(size * 2);
       }
       const { bucket } = getBucket(key);
       const existingNode = bucket.findNode((node) => node.key === key);
@@ -78,6 +81,9 @@ export default function hashMap() {
       const index = bucket.findIndexByKey(key);
       if (index !== -1) {
         bucket.removeAt(index);
+        if (listProperties.length() <= MIN_LOAD_FACTOR * size && size > 16) {
+          resize(Math.floor(size / 2));
+        }
         return true;
       }
       return false;
